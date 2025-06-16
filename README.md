@@ -30,7 +30,7 @@ Vanilla JavaScript
 
 🚀 Getting Started:
 
-Clone the repository: git clone https://github.com/yourusername/business-chatbot-ai.git
+Clone the repository: git clone https://github.com/Nibhacodes/business-chatbot-ai.git
 
 Open index.html in any modern browser
 
