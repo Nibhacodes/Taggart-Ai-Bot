@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Business Chatbot AI</title>
+  <style>
+    body {
+      background: linear-gradient(145deg, #e0eafc, #cfdef3);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .chat-container {
+      max-width: 650px;
+      margin: 80px auto;
+      background: #ffffff;
+      border: 6px double #6f42c1;
+      border-radius: 25px;
+      box-shadow: 0 0 40px rgba(111, 66, 193, 0.3);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background-color: #6f42c1;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .chat-box {
+      max-height: 550px;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    .message {
+      display: flex;
+      align-items: flex-start;
+      margin: 15px 0;
+      animation: fadeIn 0.5s ease-in;
+      flex-wrap: wrap;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .text {
+      max-width: 80%;
+      padding: 16px 22px;
+      border-radius: 22px;
+      font-size: 16px;
+      line-height: 1.6;
+      background: #f8f9fa;
+    }
+
+    .bot .text {
+      background-color: #d1e7dd;
+      color: #1b4332;
+    }
+
+    .user .text {
+      background-color: #cfe2ff;
+      color: #002855;
+      margin-left: auto;
+    }
+
+    .button-group {
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+      margin: 10px 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      opacity: 0.95;
+    }
+
+    .buy-btn {
+      background-color: #198754;
+      color: white;
+    }
+
+    .sell-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 15px;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      width: 65%;
+    }
+
+    .input-wrapper {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #aaa;
+      border-radius: 3px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .floating-assistant {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      animation: float 4s ease-in-out infinite;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+
+    .floating-assistant img {
+      width: 80px;
+    }
+
+    .floating-assistant p {
+      background-color: #6f42c1;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .message img {
+      max-width: 150px;
+      border-radius: 10px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">🤖 Taggart Business AI Bot</div>
+    <div class="chat-box" id="chat-box">
+      <div class="message bot">
+        <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712102.png" />
+        <div class="text">🤖 Hello! I'm your Business Assistant. Are you here to <strong>Buy</strong> or <strong>Sell</strong> a business?</div>
+      </div>
+      <div class="button-group">
+        <button class="buy-btn" onclick="handleBuy()">🛒 Buy</button>
+        <button class="sell-btn" onclick="handleSell()">💼 Sell</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="floating-assistant" onclick="triggerHelp()">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712102.png" />
+    <p>Hello! Need help?</p>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+
+    function addMessage(text, sender = 'bot') {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      msg.innerHTML = sender === 'bot'
+        ? `<img class="avatar" src="https://cdn-icons-png.flaticon.com/512/4712/4712102.png" />
+           <div class="text">${text}</div>`
+        : `<div class="text">${text}</div>`;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function askInput(question, callback, validator) {
+      addMessage(question);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'input-wrapper';
+
+      const input = document.createElement('input');
+      input.placeholder = "Type here...";
+
+      const submitBtn = document.createElement('button');
+      submitBtn.innerText = "Submit";
+      submitBtn.style.background = "#6f42c1";
+      submitBtn.style.color = "white";
+
+      submitBtn.onclick = () => {
+        const val = input.value.trim();
+        if (val && (!validator || validator(val))) {
+          addMessage(val, 'user');
+          wrapper.remove();
+          callback(val);
+        } else {
+          alert("Please enter a valid input!");
+        }
+      };
+
+      wrapper.appendChild(input);
+      wrapper.appendChild(submitBtn);
+      chatBox.appendChild(wrapper);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function handleBuy() {
+      addMessage('🛒 Buy', 'user');
+      askInput("🔍 What type of business are you looking for?", (type) => {
+        askInput("💰 What is your expected budget? (Only digits)", (budget) => {
+          askInput("📍 Which city or state are you interested in?", (location) => {
+            askTalkToOwner();
+          }, null);
+        }, val => /^\d+$/.test(val));
+      });
+    }
+
+    function handleSell() {
+      addMessage('💼 Sell', 'user');
+      askInput("📆 In how many months or years do you want to sell your business?", (time) => {
+        askInput("🏷️ What kind of business do you want to sell?", (type) => {
+          askInput("💸 What is your expected selling price? (Only digits)", (price) => {
+            askInput("📍 Where is your business located?", (location) => {
+              askTalkToOwner();
+            });
+          }, val => /^\d+$/.test(val));
+        });
+      }, val => /^[\d\w\s]+(month|months|year|years)?$/i.test(val));
+    }
+
+    function askTalkToOwner() {
+      addMessage("📅 Would you like to schedule a meeting with the owner?");
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'button-group';
+
+      const yesBtn = document.createElement('button');
+      yesBtn.innerText = "✅ Yes";
+      yesBtn.style.backgroundColor = "#0d6efd";
+      yesBtn.style.color = "white";
+      yesBtn.onclick = () => {
+        addMessage("✅ Yes", 'user');
+        addMessage("🔗 Redirecting to Calendly...");
+        window.open("https://calendly.com/demo-meeting", "_blank");
+        btnGroup.remove();
+      };
+
+      const noBtn = document.createElement('button');
+      noBtn.innerText = "❌ No";
+      noBtn.style.backgroundColor = "#6c757d";
+      noBtn.style.color = "white";
+      noBtn.onclick = () => {
+        addMessage("❌ No", 'user');
+        addMessage("Okay! You can connect anytime later.");
+        btnGroup.remove();
+      };
+
+      btnGroup.appendChild(yesBtn);
+      btnGroup.appendChild(noBtn);
+      chatBox.appendChild(btnGroup);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function triggerHelp() {
+      addMessage("Hi! I'm here to help. Click 'Buy' or 'Sell' to begin.");
+    }
+  </script>
+</body>
+</html>
